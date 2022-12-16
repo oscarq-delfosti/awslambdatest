@@ -1,0 +1,51 @@
+service: awslambda
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: sa-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 
+        - dynamodb:*
+      Resource: arn:aws:dynamodb:sa-east-1:615829105339:table/CardsTable
+
+functions:
+  tokenizecard:
+    handler: src/functions/tokenizeCard.exec
+    events:
+      - httpApi:
+          path: /tokenize
+          method: POST
+  getcard:
+    handler: src/functions/getCard.exec
+    events:
+      - httpApi:
+          path: /get-card/{token}
+          method: GET
+
+resources:
+  Resources: 
+    CardsTable: 
+      Type: AWS::DynamoDB::Table
+      Properties: 
+        TableName: CardTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH 
+        
+custom:
+  esbuild:
+    bundle: true
+    minify: true
+
+plugins:
+  - serverless-esbuild
+  - serverless-offline
+  - serverless-plugin-include-dependencies
+  - serverless-domain-manager
