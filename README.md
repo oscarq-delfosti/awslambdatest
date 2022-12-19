@@ -1,30 +1,63 @@
-<!--
-title: 'AWS Simple HTTP Endpoint example in NodeJS'
-description: 'This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.'
-layout: Doc
-framework: v3
-platform: AWS
-language: nodeJS
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
--->
+# Tokenización de tarjetas con Node - DynamoDB - AWS Lambda
 
-# Serverless Framework Node HTTP API on AWS
+## Uso
 
-This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.
 
-This template does not include any kind of persistence (database). For more advanced examples, check out the [serverless/examples repository](https://github.com/serverless/examples/) which includes Typescript, Mongo, DynamoDB and other examples.
+### Desarrollo local
 
-## Usage
+- Para levantar este proyecto en un entorno local primero se debe instalar AWS CLI, consulte [Interfaz de línea de comandos de AWS](https://aws.amazon.com/es/cli/).
+- Luego de instalar AWS CLI debe configurar las credenciales con un usuario AWS IAM. Deberá abrir una línea de comandos e ingresar lo siguiente:
 
-### Deployment
-
-```
-$ serverless deploy
+```bash
+aws configure
 ```
 
-After deploying, you should see output similar to:
+Este le pedirá el ACCESS_KEY y SECRET_ACCESS de su usuario.
+
+- Luego de realizar las configuraciones de AWS deberá instalar globalmente el framework [Serverless](https://www.serverless.com/framework/docs/getting-started):
+
+```bash
+npm install -g serverless
+``` 
+
+- Luego de instalar el framework [Serverless](https://www.serverless.com/framework/docs/getting-started) deberá configurar base de datos DynamoDB en el archivo serverless.yml. Para esto
+deberá crear la tabla "CardTable" desde el panel de "AWS/DynamoDB" e ingresar a la configuración para obtener el "Nombre de recurso de Amazon (ARN)":
+
+```
+provider:
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 
+        - dynamodb:*
+      Resource: [YOUR_ARN]
+```
+
+- Luego de instalar la tabla de AWS/DynamoDB en su proyecto deberá instalar los paquetes usados para el desarrollo de este proyecto con el siguiente comando: 
+```bash
+npm install
+```
+
+- Y finalmente prodrá iniciar el proyecto en un servidor local con el comando: 
+
+```bash
+npm run dev
+```
+
+### Test
+
+Para ejecutar las pruebas unitarias de esta aplicación solo deberá ejecutar el comando:
+
+```bash
+npm run test
+```
+
+### Despliegue
+
+```
+$ npm run deploy
+```
+
+Después de la implementación, debería ver un resultado similar a:
 
 ```bash
 Deploying aws-node-http-api-project to stage dev (us-east-1)
@@ -36,57 +69,6 @@ functions:
   hello: aws-node-http-api-project-dev-hello (1.9 kB)
 ```
 
-_Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [http event docs](https://www.serverless.com/framework/docs/providers/aws/events/apigateway/).
-
-### Invocation
-
-After successful deployment, you can call the created application via HTTP:
-
-```bash
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/
-```
-
-Which should result in response similar to the following (removed `input` content for brevity):
-
-```json
-{
-  "message": "Go Serverless v2.0! Your function executed successfully!",
-  "input": {
-    ...
-  }
-}
-```
-
-### Local development
-
-You can invoke your function locally by using the following command:
-
-```bash
-serverless invoke local --function hello
-```
-
-Which should result in response similar to the following:
-
-```
-{
-  "statusCode": 200,
-  "body": "{\n  \"message\": \"Go Serverless v3.0! Your function executed successfully!\",\n  \"input\": \"\"\n}"
-}
-```
+_Nota_: En su forma actual, después de la implementación, su API es pública y cualquiera puede invocarla. Para implementaciones de producción, es posible que desee configurar un autorizador. Para obtener detalles sobre cómo hacerlo, consulte [documentos de eventos http](https://www.serverless.com/framework/docs/providers/aws/events/apigateway/).
 
 
-Alternatively, it is also possible to emulate API Gateway and Lambda locally by using `serverless-offline` plugin. In order to do that, execute the following command:
-
-```bash
-serverless plugin install -n serverless-offline
-```
-
-It will add the `serverless-offline` plugin to `devDependencies` in `package.json` file as well as will add it to `plugins` in `serverless.yml`.
-
-After installation, you can start local emulation with:
-
-```
-serverless offline
-```
-
-To learn more about the capabilities of `serverless-offline`, please refer to its [GitHub repository](https://github.com/dherault/serverless-offline).

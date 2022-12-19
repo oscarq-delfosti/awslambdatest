@@ -9,7 +9,7 @@ provider:
     - Effect: Allow
       Action: 
         - dynamodb:*
-      Resource: arn:aws:dynamodb:sa-east-1:615829105339:table/CardsTable
+      Resource: [YOUR_ARM]
 
 functions:
   tokenizecard:
@@ -27,7 +27,7 @@ functions:
 
 resources:
   Resources: 
-    CardsTable: 
+    CardTable: 
       Type: AWS::DynamoDB::Table
       Properties: 
         TableName: CardTable
